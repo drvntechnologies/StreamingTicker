@@ -69,18 +69,28 @@ struct ItemEditorView: View {
                 Spacer()
                 Button(itemToEdit == nil ? "Add" : "Save") {
                     if selectedType == .score {
-                        let scoreItem = ScoreItem(league: league, teamA: teamA, teamB: teamB, startTime: startTime, additionalInfo: additionalInfo)
+                        let scoreItem = ScoreItem(
+                            id: itemToEdit != nil ? existingScoreID() : UUID(),
+                            league: league,
+                            teamA: teamA,
+                            teamB: teamB,
+                            startTime: startTime,
+                            additionalInfo: additionalInfo
+                        )
                         if let existingItem = itemToEdit, case .score = existingItem {
-                            viewModel.updateItem(.score(scoreItem))
+                            viewModel.updateItem(TickerItem.score(scoreItem))
                         } else {
-                            viewModel.addItem(.score(scoreItem))
+                            viewModel.addItem(TickerItem.score(scoreItem))
                         }
                     } else {
-                        let newsItem = NewsItem(text: newsText)
+                        let newsItem = NewsItem(
+                            id: itemToEdit != nil ? existingNewsID() : UUID(),
+                            text: newsText
+                        )
                         if let existingItem = itemToEdit, case .news = existingItem {
-                            viewModel.updateItem(.news(newsItem))
+                            viewModel.updateItem(TickerItem.news(newsItem))
                         } else {
-                            viewModel.addItem(.news(newsItem))
+                            viewModel.addItem(TickerItem.news(newsItem))
                         }
                     }
                     isPresented = false
@@ -105,6 +115,22 @@ struct ItemEditorView: View {
                 }
             }
         }
+    }
+    
+    /// Retrieves the existing ScoreItem's ID if editing
+    private func existingScoreID() -> UUID {
+        if case .score(let score) = itemToEdit! {
+            return score.id
+        }
+        return UUID()
+    }
+    
+    /// Retrieves the existing NewsItem's ID if editing
+    private func existingNewsID() -> UUID {
+        if case .news(let news) = itemToEdit! {
+            return news.id
+        }
+        return UUID()
     }
     
     struct ItemEditorView_Previews: PreviewProvider {
