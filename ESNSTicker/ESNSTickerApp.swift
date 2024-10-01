@@ -9,9 +9,12 @@ import SwiftUI
 
 @main
 struct ESNSTickerApp: App {
+    @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
+
     var body: some Scene {
-        WindowGroup {
-            ContentView()
+        // No main window; all windows are managed by AppDelegate
+        Settings {
+            EmptyView()
         }
     }
 }
